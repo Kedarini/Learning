@@ -1,13 +1,33 @@
-from fastapi import FastAPI
+from typing import Optional
+
+from fastapi import FastAPI, Path
 
 app = FastAPI()
+# GET - GET AN INFORMATION
+# POST - CREATE SOMETHING NEW
+# PUT - UPDATE AN EXISTING RESOURCE
+# DELETE - DELETE A RESOURCE
+
+students = {1: {"name": "john", "age": 17, "class": "year 12"}}
 
 
 @app.get("/")
-def read_root():
-    return {"Hello": "World"}
+def index():
+    return {"name": "First Data"}
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str | None = None):
-    return {"item_id": item_id, "q": q}
+@app.get("/get-student/{student_id}")
+def get_student(
+    student_id: int = Path(
+        description="The ID of the student you want to view", gt=0, lt=3
+    ),
+):
+    return students[student_id]
+
+
+@app.get("/get-by-name")
+def get_student(*, name: Optional[str] = None, test: int):
+    for student_id in students:
+        if students[student_id]["name"] == name:
+            return students[student_id]
+    return {"Data": "Not found"}
